@@ -6,13 +6,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ✅ CORS configuration
-app.use(cors({
-  origin: "*", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+app.use(cors());
 app.use(express.json());
 
 const client = new MongoClient(process.env.MONGO_URI, {
@@ -25,17 +19,21 @@ const client = new MongoClient(process.env.MONGO_URI, {
 
 async function run() {
   try {
+    // MongoDB connect
     await client.connect();
     console.log("✅ MongoDB Connected");
 
+    // Collections
     const allpackgeCollection = client.db("flyBook").collection("allpackge");
     const destinationsCollection = client.db("flyBook").collection("destinations");
     const packgeCollection = client.db("flyBook").collection("packge");
 
-    // 🔹 Fetch all packages
+    // Routes
+    // Fetch all packages
     app.get("/allpackge", async (req, res) => {
       try {
         const result = await allpackgeCollection.find({}).toArray();
+        if (!result.length) console.warn("⚠️ No data found in allpackge collection");
         res.json(result);
       } catch (err) {
         console.error("Error fetching allpackge:", err);
@@ -43,10 +41,10 @@ async function run() {
       }
     });
 
-    // 🔹 Fetch single package by ID
+    // Fetch single package by ID
     app.get("/allpackge/:id", async (req, res) => {
       try {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id); 
         const result = await allpackgeCollection.findOne({ id });
         if (!result) return res.status(404).json({ error: "Package not found" });
         res.json(result);
@@ -56,10 +54,11 @@ async function run() {
       }
     });
 
-    // 🔹 Fetch all destinations
+    // Fetch all destinations
     app.get("/destinations", async (req, res) => {
       try {
         const result = await destinationsCollection.find({}).toArray();
+        if (!result.length) console.warn("⚠️ No data found in destinations collection");
         res.json(result);
       } catch (err) {
         console.error("Error fetching destinations:", err);
@@ -67,10 +66,10 @@ async function run() {
       }
     });
 
-    // 🔹 Fetch single destination by ID
+    // Fetch single destination by ID
     app.get("/destinations/:id", async (req, res) => {
       try {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id); // যদি তুমি integer ID use করো
         const result = await destinationsCollection.findOne({ id });
         if (!result) return res.status(404).json({ error: "Destination not found" });
         res.json(result);
@@ -79,11 +78,11 @@ async function run() {
         res.status(500).json({ error: "Server error fetching destination" });
       }
     });
-
-    // 🔹 Fetch all packages (packge collection)
+    // Fetch all destinations
     app.get("/packge", async (req, res) => {
       try {
         const result = await packgeCollection.find({}).toArray();
+        if (!result.length) console.warn("⚠️ No data found in packge collection");
         res.json(result);
       } catch (err) {
         console.error("Error fetching packge:", err);
@@ -91,12 +90,12 @@ async function run() {
       }
     });
 
-    // 🔹 Fetch single packge by ID
+    // Fetch single destination by ID
     app.get("/packge/:id", async (req, res) => {
       try {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id); // যদি তুমি integer ID use করো
         const result = await packgeCollection.findOne({ id });
-        if (!result) return res.status(404).json({ error: "Packge not found" });
+        if (!result) return res.status(404).json({ error: "packge not found" });
         res.json(result);
       } catch (err) {
         console.error("Error fetching packge:", err);
