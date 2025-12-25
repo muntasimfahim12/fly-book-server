@@ -42,11 +42,10 @@ app.get("/allpackge", async (req, res) => {
   res.json(data);
 });
 
+// Single package fetch - now returns all packages instead of filtering by id
 app.get("/allpackge/:id", async (req, res) => {
   const database = await connectDB();
-  const id = Number(req.params.id);
-  const data = await database.collection("allpackge").findOne({ id });
-  if (!data) return res.status(404).json({ message: "Not Found" });
+  const data = await database.collection("allpackge").find({}).toArray();
   res.json(data);
 });
 
@@ -57,11 +56,10 @@ app.get("/destinations", async (req, res) => {
   res.json(data);
 });
 
+// Single destination fetch - returns all destinations
 app.get("/destinations/:id", async (req, res) => {
   const database = await connectDB();
-  const id = Number(req.params.id);
-  const data = await database.collection("destinations").findOne({ id });
-  if (!data) return res.status(404).json({ message: "Not Found" });
+  const data = await database.collection("destinations").find({}).toArray();
   res.json(data);
 });
 
@@ -72,11 +70,10 @@ app.get("/packge", async (req, res) => {
   res.json(data);
 });
 
+// Single packge fetch - returns all packge
 app.get("/packge/:id", async (req, res) => {
   const database = await connectDB();
-  const id = Number(req.params.id);
-  const data = await database.collection("packge").findOne({ id });
-  if (!data) return res.status(404).json({ message: "Not Found" });
+  const data = await database.collection("packge").find({}).toArray();
   res.json(data);
 });
 
