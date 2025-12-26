@@ -35,19 +35,34 @@ app.get("/", (req, res) => {
   res.send("🚀 FlyBook API is running");
 });
 
-// -------- ALL PACKGE --------
+// ALL packages
 app.get("/allpackge", async (req, res) => {
   const database = await connectDB();
-  const data = await database.collection("allpackge").find({}).toArray();
-  res.json(data);
+  const collection = database.collection("allpackge");
+  const data = await collection.find({}).toArray();
+  res.send(data);
 });
 
-// Single package fetch - now returns all packages instead of filtering by id
+// SINGLE package by _id
 app.get("/allpackge/:id", async (req, res) => {
-  const database = await connectDB();
-  const data = await database.collection("allpackge").find({}).toArray();
-  res.json(data);
+  try {
+    const database = await connectDB();
+    const collection = database.collection("allpackge");
+
+    const result = await collection.findOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!result) {
+      return res.status(404).send(null); // ❌ error throw না
+    }
+
+    res.send(result);
+  } catch {
+    res.status(400).send(null);
+  }
 });
+
 
 // -------- DESTINATIONS --------
 app.get("/destinations", async (req, res) => {
