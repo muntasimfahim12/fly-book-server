@@ -37,43 +37,9 @@ app.get("/", (req, res) => {
   res.send("🚀 FlyBook API is running");
 });
 
-// ---------- ALL PACKAGES ----------
-app.get("/allpackge", async (req, res) => {
-  try {
-    const database = await connectDB();
-    const data = await database.collection("allpackge").find({}).toArray();
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("All packages error:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
+// ================= PACKAGES =================
 
-app.get("/allpackge/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid package ID" });
-    }
-
-    const database = await connectDB();
-    const data = await database
-      .collection("allpackge")
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!data) {
-      return res.status(404).json({ message: "Package not found" });
-    }
-
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Single package error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// ---------- GENERAL PACKAGE ----------
+// Get all packages
 app.get("/packge", async (req, res) => {
   try {
     const database = await connectDB();
@@ -85,6 +51,7 @@ app.get("/packge", async (req, res) => {
   }
 });
 
+// Get single package by ID
 app.get("/packge/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -105,43 +72,46 @@ app.get("/packge/:id", async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error("Single packge error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// ---------- DESTINATIONS ----------
-app.get("/destinations", async (req, res) => {
-  try {
-    const database = await connectDB();
-    const data = await database.collection("destinations").find({}).toArray();
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Destinations error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-app.get("/destinations/:id", async (req, res) => {
+// ================= HOTELS =================
+
+// Get all hotels
+app.get("/hotels", async (req, res) => {
+  try {
+    const database = await connectDB();
+    const data = await database.collection("hotels").find({}).toArray();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Hotels error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// Get single hotel by ID
+app.get("/hotels/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid destination ID" });
+      return res.status(400).json({ message: "Invalid hotel ID" });
     }
 
     const database = await connectDB();
     const data = await database
-      .collection("destinations")
+      .collection("hotels")
       .findOne({ _id: new ObjectId(id) });
 
     if (!data) {
-      return res.status(404).json({ message: "Destination not found" });
+      return res.status(404).json({ message: "Hotel not found" });
     }
 
     res.status(200).json(data);
   } catch (error) {
-    console.error("Single destination error:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Single hotel error:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
