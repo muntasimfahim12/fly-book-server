@@ -115,6 +115,74 @@ app.get("/hotels/:id", async (req, res) => {
   }
 });
 
+// ================= FLIGHTS =================
+
+// Get all flights (with filters)
+app.get("/flights", async (req, res) => {
+  try {
+    const database = await connectDB();
+
+    const { search, stops, cabin } = req.query;
+
+    let query = {};
+
+    // Search by from / to
+    if (search) {
+      query.$or = [
+        { from: { $regex: search, $options: "i" } },
+        { to: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Stops filter
+    if (stops) {
+      query.stops = { $in: stops.split(",") };
+    }
+
+    // Cabin class filter
+    if (cabin) {
+      query.class = cabin;
+    }
+
+    const flights = await database
+      .collection("flights")
+      .find(query)
+      .sort({ price: 1 }) // cheapest first
+      .toArray();
+
+    res.status(200).json(flights);
+  } catch (error) {
+    console.error("Flights error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+// Get single flight
+app.get("/flights/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid flight ID" });
+    }
+
+    const database = await connectDB();
+    const flight = await database
+      .collection("flights")
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!flight) {
+      return res.status(404).json({ message: "Flight not found" });
+    }
+
+    res.status(200).json(flight);
+  } catch (error) {
+    console.error("Single flight error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+
+
 // ================= LOCALHOST =================
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
